@@ -7,7 +7,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.UUID;
 import java.util.List;
@@ -46,8 +48,9 @@ public class TasksController {
             @ApiResponse(responseCode = "201", description = "New task was successfully created"),
             @ApiResponse(responseCode = "400", description = "Validation error")
     })
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping()
-    public CreateTaskResponseDto createTask(CreateTaskRequestDto createTaskRequestDto) {
+    public CreateTaskResponseDto createTask(@RequestBody @Valid CreateTaskRequestDto createTaskRequestDto) {
         return tasksService.createTask(createTaskRequestDto);
     }
 
@@ -61,7 +64,7 @@ public class TasksController {
     @PatchMapping("/{id}")
     public PatchTaskResponseDto patchTask(
             @PathVariable(name = "id") UUID id,
-            PatchTaskRequestDto patchTaskRequestDto
+            @RequestBody PatchTaskRequestDto patchTaskRequestDto
     ) {
         return tasksService.updateTask(id, patchTaskRequestDto);
     }
@@ -73,6 +76,7 @@ public class TasksController {
                     @ApiResponse(responseCode = "404", description = "Task doesn`t exist")
             }
     )
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void deleteTask(
             @PathVariable(name = "id") UUID id
